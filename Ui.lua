@@ -392,7 +392,7 @@ function ret:Library(Name)
 			resize()
 		end
 
-		function self:Keybind(n,d,f,t)
+		function self:Keybind(n,d,t,f)
 			local toggle = t or false
 			local k = d
 
@@ -1053,7 +1053,7 @@ function ret:Library(Name)
 				TextButton.MouseButton1Down:Connect(f)
 			end
 	
-			function self2:Keybind(n,d,f,t)
+			function self2:Keybind(n,d,t,f)
 				local k = d
 	
 				local Keybind = Instance.new("Frame")
@@ -1430,7 +1430,7 @@ function ret:Library(Name)
 				end
 			end
 	
-			function self2:Keybind(n,d,f)
+			function self2:Keybind(n,d,t,f)
 				g = g + 1
 				if g <= 2 then
 					local k = d
