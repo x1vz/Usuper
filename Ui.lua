@@ -429,7 +429,7 @@ function ret:Library(Name)
                 if m.KeyCode == k then
                     if t ~= nil then  -- toggle mode
                         tog = not tog
-                        pcall(task.spawn, f, tog)
+                        pcall(task.spawn, f, toggle)
                     else              -- normal mode
                         pcall(task.spawn, f, k)
                     end
