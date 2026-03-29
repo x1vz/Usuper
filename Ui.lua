@@ -1175,7 +1175,11 @@ function ret:Library(Name)
 					if not con then
 						con = run.Stepped:Connect(function()
 							local m = uis:GetMouseLocation()
-							local r = math.clamp(((m.X-Slider_2.AbsoluteSize.X) - SliderFrame.AbsolutePosition.X)/(SliderFrame.AbsoluteSize.X),0,1)
+							local mouseX = m.X
+							local framePos = SliderFrame.AbsolutePosition.X
+							local frameSize = SliderFrame.AbsoluteSize.X
+
+							local r = math.clamp((mouseX - framePos) / frameSize, 0, 1)
 							local vtn = min + (max - min)*r
 			
 							vtn = math.clamp(vtn,min,max)
