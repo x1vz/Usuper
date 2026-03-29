@@ -548,25 +548,33 @@ function ret:Library(Name)
 				local function move()
 					if not con then
 						con = run.Stepped:Connect(function()
-							local m = uis:GetMouseLocation()
-							local mouseX = m.X
+							local mouseX = uis:GetMouseLocation().X
 							local framePos = SliderFrame.AbsolutePosition.X
 							local frameSize = SliderFrame.AbsoluteSize.X
 
+							-- calculate ratio of mouse over the slider frame
 							local r = math.clamp((mouseX - framePos) / frameSize, 0, 1)
-							local vtn = min + (max - min)*r
-			
-							vtn = math.clamp(vtn,min,max)
-							Slider_2.Position = UDim2.new(r*.92, 0, 0, 1)
-			
+							local vtn = min + (max - min) * r
+							vtn = math.clamp(vtn, min, max)
+
+							-- move slider knob
+							Slider_2.Position = UDim2.new(r * 0.92, 0, 0, 1)
+
+							-- apply step rounding
 							if step then
-									vtn = math.round(vtn / step) * step
+								vtn = math.round(vtn / step) * step
+								-- fix floating point precision based on step decimals
+								local decimals = #tostring(step):match("%.(%d+)") or 0
+								vtn = tonumber(string.format("%." .. decimals .. "f", vtn))
 							else
-									vtn = math.round(vtn) -- fallback to integers
+								vtn = math.round(vtn) -- fallback to integers
 							end
 
-							SliderFrame.Text = tostring(n)..": "..tostring(vtn)
-							pcall(task.spawn, f, vtn) 
+							-- update slider text
+							SliderFrame.Text = tostring(n) .. ": " .. tostring(vtn)
+
+							-- call the callback
+							pcall(task.spawn, f, vtn)
 						end)
 					end
 				end
