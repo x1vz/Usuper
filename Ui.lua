@@ -556,7 +556,11 @@ function ret:Library(Name)
 								if step then
 									vtn = math.round(vtn / step) * step
 
-									local decimals = #tostring(step):match("%.(%d+)") or 0
+									local decimals = 0
+									local match = tostring(step):match("%.(%d+)")
+									if match then
+											decimals = #match
+									end
 									vtn = tonumber(string.format("%." .. decimals .. "f", vtn))
 								else
 									vtn = math.round(vtn) 
@@ -1180,7 +1184,11 @@ function ret:Library(Name)
 								if step then
 									vtn = math.round(vtn / step) * step
 
-									local decimals = #tostring(step):match("%.(%d+)") or 0
+									local decimals = 0
+									local match = tostring(step):match("%.(%d+)")
+									if match then
+											decimals = #match
+									end
 									vtn = tonumber(string.format("%." .. decimals .. "f", vtn))
 								else
 									vtn = math.round(vtn) 
@@ -1556,7 +1564,11 @@ function ret:Library(Name)
 								if step then
 									vtn = math.round(vtn / step) * step
 
-									local decimals = #tostring(step):match("%.(%d+)") or 0
+									local decimals = 0
+									local match = tostring(step):match("%.(%d+)")
+									if match then
+											decimals = #match
+									end
 									vtn = tonumber(string.format("%." .. decimals .. "f", vtn))
 								else
 									vtn = math.round(vtn) 
