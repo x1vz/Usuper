@@ -392,8 +392,7 @@ function ret:Library(Name)
 			resize()
 		end
 
-		function self:Keybind(n,d,f,t)
-			local toggle = t or false
+		function self:Keybind(n,d,f)
 			local k = d
 
 			local Keybind = Instance.new("Frame")
@@ -424,18 +423,13 @@ function ret:Library(Name)
 			UIGradient.Parent = Keybind
 
 			uis.InputBegan:Connect(function(m,m2)
- 				if not m2 then
-            if not selecting then
-                if m.KeyCode == k then
-                    if t ~= nil then  -- toggle mode
-                        tog = not tog
-                        pcall(task.spawn, f, toggle)
-                    else              -- normal mode
-                        pcall(task.spawn, f, k)
-                    end
-                end
-            end
-        end
+				if not m2 then
+					if not selecting then
+						if m.KeyCode == k then
+							pcall(task.spawn, f, k)
+						end
+					end
+				end
 			end)
 
 			TextButton.MouseButton1Down:Connect(function()
@@ -1056,7 +1050,7 @@ function ret:Library(Name)
 				TextButton.MouseButton1Down:Connect(f)
 			end
 	
-			function self2:Keybind(n,d,f,t)
+			function self2:Keybind(n,d,f)
 				local k = d
 	
 				local Keybind = Instance.new("Frame")
@@ -1088,16 +1082,11 @@ function ret:Library(Name)
 	
 				uis.InputBegan:Connect(function(m,m2)
 					if not m2 then
-            if not selecting then
-                if m.KeyCode == k then
-                    if t ~= nil then  -- toggle mode
-                        tog = not tog
-                        pcall(task.spawn, f, tog)
-                    else              -- normal mode
-                        pcall(task.spawn, f, k)
-                    end
-                end
-            end
+						if not selecting then
+							if m.KeyCode == k then
+								pcall(task.spawn, f, k) 
+							end
+						end
 					end
 				end)
 	
@@ -1467,14 +1456,9 @@ function ret:Library(Name)
 					uis.InputBegan:Connect(function(m,m2)
 						if not m2 then
 							if not selecting then
-									if m.KeyCode == k then
-											if t ~= nil then  -- toggle mode
-													tog = not tog
-													pcall(task.spawn, f, tog)
-											else              -- normal mode
-													pcall(task.spawn, f, k)
-											end
-									end
+								if m.KeyCode == k then
+									pcall(task.spawn, f, k)
+								end
 							end
 						end
 					end)
@@ -1493,7 +1477,7 @@ function ret:Library(Name)
 					end)
 				end
 			end
-	
+
 			function self2:Slider(n,min,max,step,default,f)
 				g = g + 1
 				if g <= 2 then
