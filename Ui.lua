@@ -429,7 +429,7 @@ function ret:Library(Name)
                 if m.KeyCode == k then
                     if t ~= nil then  -- toggle mode
                         tog = not tog
-                        pcall(task.spawn, f, toggle)
+                        pcall(task.spawn, f, tog)
                     else              -- normal mode
                         pcall(task.spawn, f, k)
                     end
@@ -486,7 +486,7 @@ function ret:Library(Name)
 			resize()
 		end
 
-		function self:Slider(n,min,max,step,default,f)
+		function self:Slider(n,min,max,default,precise,f,step)
 			local Slider = Instance.new("Frame")
 			local SliderFrame = Instance.new("TextButton")
 			local UIGradient = Instance.new("UIGradient")
@@ -545,39 +545,30 @@ function ret:Library(Name)
     			end
     		end)
     
-				local function move()
-					if not con then
-						con = run.Stepped:Connect(function()
-							local mouseX = uis:GetMouseLocation().X
-							local framePos = SliderFrame.AbsolutePosition.X
-							local frameSize = SliderFrame.AbsoluteSize.X
+            local function move()
+                if not con then
+									con = run.Stepped:Connect(function()
+										local m = uis:GetMouseLocation()
+										local r = math.clamp(((m.X-Slider_2.AbsoluteSize.X) - SliderFrame.AbsolutePosition.X)/(SliderFrame.AbsoluteSize.X),0,1)
+										local vtn = min + (max - min)*r
+						
+										vtn = math.clamp(vtn,min,max)
+										Slider_2.Position = UDim2.new(r*.92, 0, 0, 1)
+					
+										if not precise then
+												vtn = math.round(vtn)
+										elseif step then
+												vtn = math.round(vtn / step) * step
+												vtn = tonumber(string.format("%.10g", vtn))
+										else
+												vtn = tonumber(tostring(vtn):sub(1,4))
+										end
 
-							-- calculate ratio of mouse over the slider frame
-							local r = math.clamp((mouseX - framePos) / frameSize, 0, 1)
-							local vtn = min + (max - min) * r
-							vtn = math.clamp(vtn, min, max)
-
-							-- move slider knob
-							Slider_2.Position = UDim2.new(r * 0.92, 0, 0, 1)
-
-							-- apply step rounding
-							if step then
-								vtn = math.round(vtn / step) * step
-								-- fix floating point precision based on step decimals
-								local decimals = #tostring(step):match("%.(%d+)") or 0
-								vtn = tonumber(string.format("%." .. decimals .. "f", vtn))
-							else
-								vtn = math.round(vtn) -- fallback to integers
-							end
-
-							-- update slider text
-							SliderFrame.Text = tostring(n) .. ": " .. tostring(vtn)
-
-							-- call the callback
-							pcall(task.spawn, f, vtn)
-						end)
-					end
-				end
+										SliderFrame.Text = tostring(n)..": "..tostring(vtn)
+										pcall(task.spawn, f, vtn)
+        					end)
+                end
+            end
             
     		SliderFrame.MouseButton1Down:Connect(move)
     		Slider_2.MouseButton1Down:Connect(move)
@@ -1121,7 +1112,7 @@ function ret:Library(Name)
 				end)
 			end
 	
-			function self2:Slider(n,min,max,step,default,f)
+			function self2:Slider(n,min,max,step,default,precise,f)
 				local Slider = Instance.new("Frame")
 				local SliderFrame = Instance.new("TextButton")
 				local UIGradient = Instance.new("UIGradient")
@@ -1194,10 +1185,13 @@ function ret:Library(Name)
 							vtn = math.clamp(vtn,min,max)
 							Slider_2.Position = UDim2.new(r*.92, 0, 0, 1)
 			
-							if step then
+							if not precise then
+									vtn = math.round(vtn)
+							elseif step then
 									vtn = math.round(vtn / step) * step
+									vtn = tonumber(string.format("%.10g", vtn))
 							else
-									vtn = math.round(vtn) -- fallback to integers
+									vtn = tonumber(tostring(vtn):sub(1,4))
 							end
 
 							SliderFrame.Text = tostring(n)..": "..tostring(vtn)
@@ -1498,7 +1492,7 @@ function ret:Library(Name)
 				end
 			end
 	
-			function self2:Slider(n,min,max,step,default,f)
+			function self2:Slider(n,min,max,default,precise,f,step)
 				g = g + 1
 				if g <= 2 then
 					local Slider = Instance.new("Frame")
@@ -1559,28 +1553,30 @@ function ret:Library(Name)
 						end
 					end)
 			
+				--updated: fixed and added rounding, removed shit args like precise,
 				local function move()
 					if not con then
 						con = run.Stepped:Connect(function()
-							local m = uis:GetMouseLocation()
-							local mouseX = m.X
+							local mouseX = uis:GetMouseLocation().X
 							local framePos = SliderFrame.AbsolutePosition.X
 							local frameSize = SliderFrame.AbsoluteSize.X
 
 							local r = math.clamp((mouseX - framePos) / frameSize, 0, 1)
-							local vtn = min + (max - min)*r
-			
-							vtn = math.clamp(vtn,min,max)
-							Slider_2.Position = UDim2.new(r*.92, 0, 0, 1)
-			
-							if step then
-									vtn = math.round(vtn / step) * step
-							else
-									vtn = math.round(vtn) -- fallback to integers
-							end
+							local vtn = min + (max - min) * r
+							vtn = math.clamp(vtn, min, max)
 
-							SliderFrame.Text = tostring(n)..": "..tostring(vtn)
-							pcall(task.spawn, f, vtn) 
+							Slider_2.Position = UDim2.new(r * 0.92, 0, 0, 1)
+
+							if step then
+								vtn = math.round(vtn / step) * step
+
+								local decimals = #tostring(step):match("%.(%d+)") or 0
+								vtn = tonumber(string.format("%." .. decimals .. "f", vtn))
+							else
+								vtn = math.round(vtn) 
+							end
+							SliderFrame.Text = tostring(n) .. ": " .. tostring(vtn)
+							pcall(task.spawn, f, vtn)
 						end)
 					end
 				end
