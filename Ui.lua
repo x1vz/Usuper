@@ -1112,7 +1112,7 @@ function ret:Library(Name)
 				end)
 			end
 	
-			function self2:Slider(n,min,max,default,precise,f,step)
+			function self2:Slider(n,min,max,step,default,precise,f)
 				local Slider = Instance.new("Frame")
 				local SliderFrame = Instance.new("TextButton")
 				local UIGradient = Instance.new("UIGradient")
